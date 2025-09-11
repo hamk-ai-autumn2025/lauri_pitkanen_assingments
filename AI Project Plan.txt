@@ -1,0 +1,125 @@
+Tekoäly projektin aiheena on tarkoitus jatkaa tekemistä aiheesta jota olen jo käyttänyt itse roolipelaamiseen video pelissä Elder Scrolls IV: Oblivion, jossa käytin tekoälyä apuna kirjoittamaan pelaaja-hahmon päiväkirja merkintöjä. Aikomus on jatkaa merkintöjen tekemistä ja luoda pieni kirja ja mahdollisesti audio kirja. Kysyin Chat GPT:ltä ohjeita ja se tuli tähän lopputulokseen.
+
+
+1) Project goal — what this achieves (concrete examples)
+
+Primary goal: produce a multi-page, narratable AI storybook of Eirhild’s journals that grows as you play — each quest/faction log becomes a new entry — with both text pages (EPUB/PDF/web) and high-quality narrated audio (TTS) for each entry. The book can be personal (your playthrough) or a canonicalized collection of the character’s life.
+
+Concrete examples of what it can achieve
+
+Interactive Journal + Voice — A web/book where each journal entry is displayed with metadata (location, quest, date) and a high-quality AI narration button that plays the entry in Eirhild’s voice (or a chosen voice). Example: click “Gauntlets of the Crusader” entry → read text + press play → hear the entry read with subtle emotion.
+
+Dynamic Playthrough Log — As you complete quests, a simple importer or UI lets you add entries (templated prompts) and auto-generate polished journal prose and narration. Example: finish a Fighters Guild quest → paste your notes → the system produces a polished entry + audio and appends it to the book.
+
+2) Technologies & tools (specific)
+Text generation & orchestration
+
+OpenAI / GPT (ChatGPT or GPT API) or another LLM for rewriting player notes into in-voice journal entries. Use few-shot prompts to preserve Eirhild’s voice.
+
+LangChain (optional) to orchestrate prompt chains, retrieval of previous entries, and templating.
+
+Text-to-Speech (narration)
+
+ElevenLabs — excellent, emotional TTS; supports custom voices and SSML-ish control (paid, has free tier).
+
+Google Cloud Text-to-Speech (WaveNet) — high fidelity; configurable voices and SSML.
+
+Play.ht / Murf.ai — decent alternatives with easy export.
+
+Local fallback: Balabolka + SAPI voices for free/diy; or open-source TTS (Coqui TTS) if you want self-hosted.
+
+Audio editing / processing
+
+Audacity (free) or Reaper (cheap) for trimming, levels, adding ambience or music.
+
+FFmpeg for batch conversions and concatenation.
+
+Document / ebook generation
+
+Markdown → EPUB/PDF: Pandoc or Calibre or Sigil to make EPUBs and PDFs.
+
+For printable layout: Affinity Publisher or Adobe InDesign.
+
+Web / interactive UI (optional)
+
+Frontend: React (Next.js) + Tailwind CSS for a modern storybook UI.
+
+Audio handling: Web Audio API; lazy stream MP3s from cloud storage.
+
+Backend: Node.js / Express or serverless (Vercel/Netlify functions) to host generation endpoints.
+
+Database: SQLite or Firebase / Supabase for entries/metadata.
+
+Automation / pipeline
+
+GitHub Actions or simple scripts to automate: (1) generate entry from notes → (2) synthesize audio → (3) produce EPUB/PDF → (4) deploy web.
+
+Storage: S3 / Backblaze / Firebase Storage for audio assets.
+
+Authoring & collaboration
+
+Notion or Google Docs to draft entries and collect in-game notes.
+
+Obsidian for local, linkable journal notes.
+
+Extras
+
+SSML: for pitch/pauses/emphasis control in TTS services.
+
+Metadata & Accessibility: EPUB metadata, chapter markers, transcripts.
+
+3) Risks & failure modes (and mitigations)
+
+Scope creep / too much content
+
+Risk: If you try to cover every sidequest and faction immediately, the workload explodes.
+
+Mitigation: Start with main arc + 5 key quests; scale iteratively.
+
+Quality of AI narration / voice ethics
+
+Risk: Cloned voices can be expensive and have legal/ethical limits; poor TTS choices hurt immersion.
+
+Mitigation: Use high-quality commercial TTS (ElevenLabs) or hire a voice actor for major entries. Don’t clone real persons without consent.
+
+IP / Copyright concerns (Elder Scrolls & Bethesda)
+
+Risk: Public distribution or monetization could infringe Bethesda’s IP.
+
+Mitigation: Keep it fan and non-commercial; include disclaimers; for anything public/paid consult rights holders or keep it private.
+
+Costs
+
+Risk: TTS, LLM token usage, hosting, and storage add up.
+
+Mitigation: Budget for cloud usage, use free tiers for prototyping, generate offline when possible.
+
+Technical complexity & integration
+
+Risk: Orchestrating text→audio→ebook→web is multiple systems; bugs can block flow.
+
+Mitigation: Build simple MVP pipeline first (manual steps), then automate.
+
+Audio/voice consistency
+
+Risk: Voices or narration tones vary across entries.
+
+Mitigation: Choose 1–2 voices and presets; create voice prompt guidelines (emotion, pace).
+
+User data & privacy
+
+Risk: If you record yourself or others, get permissions.
+
+Mitigation: Follow consent best practices and store sensitive data securely.
+
+4) Weekly work schedule totaling ≈135 hours (3 weeks × 45 hrs)
+
+Plan: 3 weeks, each week = 45 hours (6 days/week × 7.5 hours/day). This gives a focused, deliverable-oriented sprint that goes from prototype → flesh out entries → polish & package.
+
+Deliverables by end of Week 3:
+
+MVP web/book with 8 polished journal entries (text + TTS audio)
+
+Automated mini-pipeline (notes → polished text → TTS export → EPUB chapter)
+
+Packaged EPUB + MP3s + README for future expansion

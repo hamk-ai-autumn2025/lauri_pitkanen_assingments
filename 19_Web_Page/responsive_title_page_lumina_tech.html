@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LuminaTech — Smart Lighting That Works</title>
+  <meta name="description" content="LuminaTech builds smart, sustainable lighting products and services for homes and businesses." />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container nav" role="navigation" aria-label="Primary">
+      <div class="logo"><span class="logo-badge" aria-hidden="true"></span> <span>LuminaTech</span></div>
+      <nav>
+        <ul>
+          <li><a href="#products">Products</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero -->
+    <section class="hero" aria-label="Intro">
+      <div>
+        <h1>Smart lighting that pays for itself</h1>
+        <p class="tagline">Cut energy costs by up to 40% with adaptive LEDs and zero-fuss controls. Deploy in days. Scale anywhere.</p>
+        <div class="cta">
+          <a class="btn primary" href="#products">Explore Products</a>
+          <a class="btn" href="#services">See Services</a>
+        </div>
+      </div>
+
+      <!-- Inline SVG image generated here -->
+      <figure class="hero-art" role="img" aria-label="Abstract illustration of connected lights and buildings">
+        <img src="hero-image.svg" alt="Smart lighting graphic" />
+      </figure>
+    </section>
+
+    <!-- Products -->
+    <section id="products">
+      <div class="kicker">Products</div>
+      <h2>Hardware built to lower bills</h2>
+      <p class="lead">Connected luminaires, sensors, and gateways that work out of the box and last for years.</p>
+      <div class="grid-3">
+        <article class="card" aria-label="Product: LT One">
+          <h3>LT One™ LED Panel</h3>
+          <p>High-efficiency edge-lit panel with adaptive dimming and 90+ CRI. Tool-less install.</p>
+        </article>
+        <article class="card" aria-label="Product: Sense PIR">
+          <h3>Sense PIR</h3>
+          <p>Ceiling sensor for motion, daylight, and occupancy analytics. Secure local processing.</p>
+        </article>
+        <article class="card" aria-label="Product: MeshHub">
+          <h3>MeshHub</h3>
+          <p>Gateway with Matter + Thread support. Manages up to 500 nodes with OTA updates.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services">
+      <div class="kicker">Services</div>
+      <h2>From audit to rollout</h2>
+      <p class="lead">We scope, install, and maintain. One team. One warranty.</p>
+      <div class="grid-3">
+        <article class="card"><h3>Energy Audit</h3><p>Baseline usage, model savings, and create a payback plan.</p></article>
+        <article class="card"><h3>Turnkey Install</h3><p>Certified crews and zero-downtime changeovers.</p></article>
+        <article class="card"><h3>Managed Support</h3><p>24/7 monitoring, firmware, and swap coverage.</p></article>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="about">
+      <div>
+        <div class="kicker">About Us</div>
+        <h2>Built for real savings</h2>
+        <p class="lead">We are engineers and installers. We design for reliability and measurable ROI, not hype.</p>
+        <p>Founded in 2018, LuminaTech delivers lighting systems that cut waste first. Our stack is open-protocol and privacy-first, so you are never locked in.</p>
+      </div>
+      <div class="stats" aria-label="Company stats">
+        <div class="stat"><b>1.8M+</b>kWh saved</div>
+        <div class="stat"><b>500+</b>sites live</div>
+        <div class="stat"><b>38%</b>avg savings</div>
+        <div class="stat"><b>24 mo</b>median payback</div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <div class="kicker">Contact</div>
+      <h2>Get a quote</h2>
+      <p class="lead">Tell us your building size and current spend. We reply with a simple plan.</p>
+      <form id="contactForm" aria-label="Contact form" class="card" style="max-width:720px">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+          <label> Name<input required name="name" style="width:100%" class="btn" /></label>
+          <label> Email<input required type="email" name="email" style="width:100%" class="btn" /></label>
+          <label style="grid-column:1/-1"> Message<textarea required name="message" rows="4" style="width:100%" class="btn"></textarea></label>
+        </div>
+        <div style="margin-top:12px"><button class="btn primary" type="submit">Request estimate</button></div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container foot">
+      <div>© <span id="y"></span> LuminaTech. All rights reserved.</div>
+      <div><a href="#">Privacy</a> • <a href="#">Terms</a></div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BMI Calculator</title>
+  <style>
+    :root{--bg:#f6f8fb;--card:#ffffff;--accent:#2563eb;--good:#16a34a;--warn:#f59e0b;--bad:#ef4444;--muted:#6b7280}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,system-ui,Arial;background:var(--bg);color:#0f172a}
+    .container{max-width:720px;margin:40px auto;padding:20px}
+    header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+    h1{font-size:20px;margin:0;color:var(--accent)}
+    p.lead{margin:0;color:var(--muted)}
+    .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.06)}
+    form.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input[type="number"],select{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8;font-size:14px}
+    .full{grid-column:1/-1}
+    .controls{display:flex;gap:8px;align-items:center;margin-top:12px}
+    button{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700}
+    button.ghost{background:transparent;color:var(--accent);border:1px solid rgba(37,99,235,0.12)}
+    .result{margin-top:16px;padding:14px;border-radius:10px;background:linear-gradient(180deg,rgba(2,6,23,0.02),transparent);display:flex;align-items:center;gap:12px}
+    .bmi-val{font-size:28px;font-weight:800;color:var(--accent)}
+    .bmi-meta{color:var(--muted)}
+    .meter{height:12px;background:#e6eef8;border-radius:999px;overflow:hidden;flex:1}
+    .meter-fill{height:100%;background:var(--accent);width:0%;transition:width .4s ease}
+    .note{font-size:13px;color:var(--muted);margin-top:8px}
+    .small{font-size:13px;color:var(--muted)}
+    @media (max-width:640px){.container{margin:18px;padding:14px}.grid{grid-template-columns:1fr}.controls{flex-direction:column;align-items:stretch}button{width:100%}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>BMI Calculator</h1>
+        <p class="lead">Calculate your Body Mass Index and see the WHO category.</p>
+      </div>
+    </header>
+
+    <main class="card" role="main">
+      <form id="bmiForm" class="grid" autocomplete="off">
+        <div>
+          <label for="weight">Weight</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="weight" name="weight" type="number" min="1" step="any" placeholder="e.g. 70" required />
+            <select id="weightUnit" name="weightUnit" aria-label="Weight unit">
+              <option value="kg">kg</option>
+              <option value="lb">lb</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label for="height">Height</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="height" name="height" type="number" min="30" step="any" placeholder="e.g. 170" required />
+            <select id="heightUnit" name="heightUnit" aria-label="Height unit">
+              <option value="cm">cm</option>
+              <option value="m">m</option>
+              <option value="ft">ft</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="full">
+          <label for="notes">Optional note</label>
+          <input id="notes" name="notes" type="text" placeholder="e.g. measured after workout (saved locally)" />
+        </div>
+
+        <div class="controls full">
+          <button id="calcBtn" type="submit">Calculate BMI</button>
+          <button id="clearBtn" type="button" class="ghost">Clear</button>
+        </div>
+      </form>
+
+      <div id="output" class="result" aria-live="polite" style="display:none">
+        <div class="left">
+          <div class="bmi-val" id="bmiVal">0.0</div>
+          <div class="bmi-meta" id="bmiCat">—</div>
+        </div>
+        <div style="flex:1;min-width:160px">
+          <div class="meter" aria-hidden="true"><div class="meter-fill" id="meterFill"></div></div>
+          <div class="small note" id="bmiNote">Normal ranges: 18.5–24.9</div>
+        </div>
+      </div>
+
+      <div class="note">BMI is a screening tool; it doesn't measure body fat directly. For children, athletes, or medical advice, consult a professional.</div>
+    </main>
+
+    <footer style="margin-top:10px" class="small">Values are stored locally in your browser (localStorage).</footer>
+  </div>
+
+  <script>
+    // Minimal contract:
+    // Inputs: weight, height + units; Outputs: BMI value, category, animated meter; Persist: last values saved locally
+
+    const form = document.getElementById('bmiForm');
+    const weightEl = document.getElementById('weight');
+    const weightUnitEl = document.getElementById('weightUnit');
+    const heightEl = document.getElementById('height');
+    const heightUnitEl = document.getElementById('heightUnit');
+    const notesEl = document.getElementById('notes');
+    const output = document.getElementById('output');
+    const bmiValEl = document.getElementById('bmiVal');
+    const bmiCatEl = document.getElementById('bmiCat');
+    const meterFill = document.getElementById('meterFill');
+
+    const STORAGE_KEY = 'bmiCalc.last';
+
+    function toKg(weight, unit){
+      if(unit === 'kg') return Number(weight);
+      if(unit === 'lb') return Number(weight) * 0.45359237;
+      return Number(weight);
+    }
+    function toMeters(height, unit){
+      if(unit === 'm') return Number(height);
+      if(unit === 'cm') return Number(height) / 100;
+      if(unit === 'ft') return Number(height) * 0.3048;
+      return Number(height);
+    }
+    function computeBMI(kg, m){
+      if(!m || m <= 0) return null;
+      return kg / (m * m);
+    }
+
+    function categoryFor(bmi){
+      // WHO adult categories (simple)
+      if(bmi < 18.5) return {label: 'Underweight', color: 'var(--warn)'};
+      if(bmi < 25) return {label: 'Normal weight', color: 'var(--good)'};
+      if(bmi < 30) return {label: 'Overweight', color: 'var(--warn)'};
+      return {label: 'Obese', color: 'var(--bad)'};
+    }
+
+    function renderResult(bmi){
+      if(bmi == null || !isFinite(bmi)) return;
+      const rounded = Math.round(bmi * 10) / 10;
+      bmiValEl.textContent = rounded.toFixed(1);
+      const cat = categoryFor(rounded);
+      bmiCatEl.textContent = cat.label;
+      bmiCatEl.style.color = cat.color;
+      // meter: map BMI 10..40 to 0..100%
+      const pct = Math.max(0, Math.min(100, ((rounded - 10) / 30) * 100));
+      meterFill.style.width = pct + '%';
+      meterFill.style.background = cat.color;
+      output.style.display = 'flex';
+    }
+
+    function saveState(){
+      try{
+        const state = {weight: weightEl.value, weightUnit: weightUnitEl.value, height: heightEl.value, heightUnit: heightUnitEl.value, notes: notesEl.value};
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }catch(e){/* ignore */}
+    }
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY); if(!raw) return;
+        const st = JSON.parse(raw);
+        if(st.weight) weightEl.value = st.weight; if(st.weightUnit) weightUnitEl.value = st.weightUnit;
+        if(st.height) heightEl.value = st.height; if(st.heightUnit) heightUnitEl.value = st.heightUnit;
+        if(st.notes) notesEl.value = st.notes;
+      }catch(e){/* ignore */}
+    }
+    function clearState(){
+      localStorage.removeItem(STORAGE_KEY);
+      weightEl.value=''; heightEl.value=''; notesEl.value=''; output.style.display='none'; meterFill.style.width='0%';
+    }
+
+    form.addEventListener('submit', e =>{
+      e.preventDefault();
+      const weight = Number(weightEl.value); const wUnit = weightUnitEl.value;
+      const height = Number(heightEl.value); const hUnit = heightUnitEl.value;
+      if(!weight || weight <= 0){ alert('Please enter a valid weight.'); weightEl.focus(); return; }
+      if(!height || height <= 0){ alert('Please enter a valid height.'); heightEl.focus(); return; }
+      const kg = toKg(weight, wUnit);
+      const m = toMeters(height, hUnit);
+      const bmi = computeBMI(kg, m);
+      if(bmi == null || !isFinite(bmi)){ alert('Could not compute BMI with those values.'); return; }
+      renderResult(bmi);
+      saveState();
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', ()=>{ if(confirm('Clear saved values?')) clearState(); });
+
+    // load previous values on start
+    loadState();
+    // if loaded, auto-calc once
+    (function autoCalcIfData(){
+      const w = weightEl.value; const h = heightEl.value; if(w && h){ const evt = new Event('submit', {cancelable:true}); form.dispatchEvent(evt); }
+    })();
+  </script>
+</body>
+</html>
